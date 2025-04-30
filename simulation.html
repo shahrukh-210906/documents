@@ -859,6 +859,9 @@
                 totalClearanceTime: 0
             };
             
+            // Track approaching ambulances (within 1km threshold)
+            let approachingAmbulances = [];
+            
             // Path options for ambulances
             const paths = [
                 { 
@@ -867,7 +870,8 @@
                     animation: 'move-down 15s linear',
                     endCondition: (el) => parseFloat(el.style.top) > window.innerHeight,
                     affectedLights: ['north', 'south'],
-                    opposingLights: ['east', 'west']
+                    opposingLights: ['east', 'west'],
+                    direction: 'north-south'
                 },
                 { 
                     name: "South to North",
@@ -875,7 +879,8 @@
                     animation: 'move-up 15s linear',
                     endCondition: (el) => parseFloat(el.style.top) < -25,
                     affectedLights: ['north', 'south'],
-                    opposingLights: ['east', 'west']
+                    opposingLights: ['east', 'west'],
+                    direction: 'south-north'
                 },
                 { 
                     name: "East to West",
@@ -883,7 +888,8 @@
                     animation: 'move-left 15s linear',
                     endCondition: (el) => parseFloat(el.style.left) < -50,
                     affectedLights: ['east', 'west'],
-                    opposingLights: ['north', 'south']
+                    opposingLights: ['north', 'south'],
+                    direction: 'east-west'
                 },
                 { 
                     name: "West to East",
@@ -891,7 +897,8 @@
                     animation: 'move-right 15s linear',
                     endCondition: (el) => parseFloat(el.style.left) > window.innerWidth,
                     affectedLights: ['east', 'west'],
-                    opposingLights: ['north', 'south']
+                    opposingLights: ['north', 'south'],
+                    direction: 'west-east'
                 }
             ];
             
@@ -912,6 +919,9 @@
                 
                 // Start checking for red light violations
                 setInterval(checkRedLightViolations, 100);
+                
+                // Start checking for approaching ambulances (1km threshold)
+                setInterval(checkApproachingAmbulances, 500);
                 
                 addAlert('System initialized and ready');
             }
@@ -956,6 +966,8 @@
                 const emergencyLevel = Math.floor(Math.random() * 3) + 1;
                 ambulance.dataset.priority = emergencyLevel;
                 ambulance.dataset.path = path.name;
+                ambulance.dataset.direction = path.direction;
+                ambulance.dataset.speed = (Math.random() * 0.5 + 0.5).toFixed(2); // Speed between 0.5 and 1.0
                 ambulance.dataset.id = `AMB-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
                 
                 if (emergencyLevel === 3) {
@@ -967,16 +979,10 @@
                 ambulances.push(ambulance);
                 stats.todayEmergencies++;
                 
-                // Animate ambulance
-                ambulance.style.animation = path.animation;
-                
-                // When ambulance reaches junction area
-                const checkInterval = setInterval(() => {
-                    if (isNearJunction(ambulance)) {
-                        clearInterval(checkInterval);
-                        handleAmbulanceApproach(ambulance, path);
-                    }
-                }, 100);
+                // Adjust animation duration based on speed (faster speed = shorter duration)
+                const baseDuration = 15; // Base duration in seconds
+                const adjustedDuration = baseDuration / ambulance.dataset.speed;
+                ambulance.style.animation = `${path.animation.replace('15s', `${adjustedDuration}s`)}`;
                 
                 // Remove ambulance when animation completes
                 const endCheckInterval = setInterval(() => {
@@ -988,29 +994,89 @@
                 
                 updateStats();
                 renderLiveMap();
-                addAlert(`Ambulance ${ambulance.dataset.id} entered from ${path.name} (Priority ${emergencyLevel})`);
+                addAlert(`Ambulance ${ambulance.dataset.id} entered from ${path.name} (Priority ${emergencyLevel}, Speed ${ambulance.dataset.speed})`);
             }
             
-            // Check if ambulance is near junction
-            function isNearJunction(ambulance) {
-                const rect = ambulance.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
+            // Check for ambulances approaching within 1km threshold
+            function checkApproachingAmbulances() {
+                // In our simulation, we'll consider "1km" to be when the ambulance is within 300px of the junction
+                const thresholdDistance = 300;
                 
-                const junctionCenterX = window.innerWidth / 2;
-                const junctionCenterY = window.innerHeight / 2;
+                // Clear previous approaching ambulances
+                approachingAmbulances = [];
                 
-                const distance = Math.sqrt(
-                    Math.pow(centerX - junctionCenterX, 2) + 
-                    Math.pow(centerY - junctionCenterY, 2)
+                // Check each ambulance
+                ambulances.forEach(ambulance => {
+                    const rect = ambulance.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    
+                    const junctionCenterX = window.innerWidth / 2;
+                    const junctionCenterY = window.innerHeight / 2;
+                    
+                    const distance = Math.sqrt(
+                        Math.pow(centerX - junctionCenterX, 2) + 
+                        Math.pow(centerY - junctionCenterY, 2)
+                    );
+                    
+                    if (distance < thresholdDistance) {
+                        // Ambulance is within threshold distance
+                        approachingAmbulances.push({
+                            element: ambulance,
+                            distance: distance,
+                            priority: parseInt(ambulance.dataset.priority),
+                            speed: parseFloat(ambulance.dataset.speed),
+                            direction: ambulance.dataset.direction
+                        });
+                    }
+                });
+                
+                // If we have approaching ambulances, handle them according to priority
+                if (approachingAmbulances.length > 0) {
+                    handleApproachingAmbulances();
+                }
+            }
+            
+            // Handle multiple approaching ambulances according to priority rules
+            function handleApproachingAmbulances() {
+                // Sort approaching ambulances by priority (highest first), then by speed (fastest first)
+                approachingAmbulances.sort((a, b) => {
+                    if (a.priority !== b.priority) {
+                        return b.priority - a.priority; // Higher priority first
+                    }
+                    return b.speed - a.speed; // Faster speed first
+                });
+                
+                // Get the highest priority ambulance (after sorting)
+                const highestPriorityAmbulance = approachingAmbulances[0];
+                
+                // Check if this ambulance is already being handled
+                const isAlreadyHandled = approachingAmbulances.some(a => 
+                    a.element.dataset.handled === 'true' && 
+                    a.priority === highestPriorityAmbulance.priority
                 );
                 
-                return distance < 150; // Within 150px of junction center
+                if (!isAlreadyHandled) {
+                    // Mark all ambulances of this priority as handled
+                    approachingAmbulances.forEach(a => {
+                        if (a.priority === highestPriorityAmbulance.priority) {
+                            a.element.dataset.handled = 'true';
+                        }
+                    });
+                    
+                    // Handle the highest priority ambulance
+                    handleAmbulanceApproach(highestPriorityAmbulance);
+                }
             }
             
             // Handle ambulance approaching junction
-            function handleAmbulanceApproach(ambulance, path) {
+            function handleAmbulanceApproach(ambulance) {
                 const startTime = Date.now();
+                
+                // Find the path configuration for this ambulance
+                const path = paths.find(p => p.direction === ambulance.direction);
+                
+                if (!path) return;
                 
                 // Change traffic lights based on path
                 resetAllLights();
@@ -1029,7 +1095,7 @@
                 stopCarsInJunction();
                 
                 // Calculate response time (simplified for demo)
-                const responseTime = Math.floor(Math.random() * 10) + 5;
+                const responseTime = Math.floor(Math.random() * 5) + 3; // Faster response with new system
                 stats.totalResponseTime += responseTime;
                 stats.totalCases++;
                 
@@ -1043,12 +1109,15 @@
                     stats.successfulClearances++;
                     updateStats();
                     
-                    addAlert(`Ambulance ${ambulance.dataset.id} cleared junction in ${clearanceTime.toFixed(1)}s`);
-                }, 5000);
+                    addAlert(`Ambulance ${ambulance.element.dataset.id} cleared junction in ${clearanceTime.toFixed(1)}s`);
+                    
+                    // Mark ambulance as no longer being handled
+                    ambulance.element.dataset.handled = 'false';
+                }, 3000); // Shorter clearance time with new system
                 
                 updateStats();
                 updateDashboardLights();
-                addAlert(`Ambulance ${ambulance.dataset.id} approaching junction - activating priority`);
+                addAlert(`Ambulance ${ambulance.element.dataset.id} approaching junction - activating priority`);
             }
             
             // Stop cars in junction area
@@ -1259,6 +1328,7 @@
                 ambulances = [];
                 cars = [];
                 stoppedCars = [];
+                approachingAmbulances = [];
                 
                 // Reset stats
                 stats = {
