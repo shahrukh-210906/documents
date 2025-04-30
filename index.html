@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>resQroute</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="animations.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-logo">SmartTCS</div>
+        <ul class="nav-links">
+            <li><a href="#problem">Problem</a></li>
+            <li><a href="#workflow">How It Works</a></li>
+            <li><a href="#components">Components</a></li>
+            <li><a href="#technology">Technology</a></li>
+            <li><a href="#benefits">Benefits</a></li>
+            <li><a href="#future">Future</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    
+    <header>
+        <div class="hero-content">
+            <h1>resQroute</h1>
+            <p class="tagline">Smart Traffic Control System for Ambulances</p>
+            <div class="ambulance-animation">
+                <!-- Animation placeholder -->
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="50" y="100" width="100" height="50" fill="#FFFFFF"/>
+                    <rect x="70" y="80" width="60" height="20" fill="#FFFFFF"/>
+                    <circle cx="80" cy="150" r="15" fill="#E63946"/>
+                    <circle cx="120" cy="150" r="15" fill="#E63946"/>
+                    <rect x="140" y="100" width="20" height="20" fill="#E63946"/>
+                    <path d="M60 100 L40 120 L40 130 L60 130 Z" fill="#E63946"/>
+                </svg>
+            </div>
+            <a href="#how-it-works" class="cta-button">See How It Works</a>
+            <a href="#how-it-works" class="cta-button" onclick="window.location.href='simulation.html'">Simulation</a>
+
+        </div>
+    </header>
+
+
+    <!-- Problem Section -->
+    <section id="problem">
+        <h2>Why Do We Need Smarter Traffic Control?</h2>
+        <p>Every second counts in emergency medical situations, yet traffic congestion delays ambulances when they're needed most. Traditional traffic systems aren't equipped to prioritize emergency vehicles effectively, leading to unnecessary loss of life.</p>
+        
+        <div class="problem-stats">
+            <div class="stat-card">
+                <div class="stat-number">30%</div>
+                <p>of ambulances arrive late due to traffic congestion</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4-6 min</div>
+                <p>average delay in urban areas during peak hours</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">15%</div>
+                <p>increase in survival rates with faster response times</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workflow Section -->
+    <section id="workflow">
+        <h2>System Workflow</h2>
+        <p>Our AI-powered traffic control system dynamically creates green corridors for ambulances, reducing response times and saving lives.</p>
+        
+        <div class="animation-container">
+            <div class="road-animation">
+                <div class="ambulance-anim" id="animated-ambulance">
+                    <div class="ambulance-body"></div>
+                    <div class="ambulance-top"></div>
+                    <div class="ambulance-light"></div>
+                    <div class="ambulance-cross"></div>
+                    <div class="wheel back-wheel"></div>
+                    <div class="wheel front-wheel"></div>
+                </div>
+                
+                <div class="junction">
+                    <div class="traffic-light-anim" id="north-light">
+                        <div class="traffic-light-box">
+                            <div class="traffic-light red active"></div>
+                            <div class="traffic-light yellow"></div>
+                            <div class="traffic-light green"></div>
+                        </div>
+                    </div>
+                    <div class="traffic-light-anim" id="east-light">
+                        <div class="traffic-light-box">
+                            <div class="traffic-light red active"></div>
+                            <div class="traffic-light yellow"></div>
+                            <div class="traffic-light green"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="normal-traffic">
+                    <div class="car" id="car1"></div>
+                    <div class="car" id="car2"></div>
+                </div>
+            </div>
+            
+            <div class="animation-controls">
+                <button id="start-animation" class="animation-btn">Start Animation</button>
+                <button id="reset-animation" class="animation-btn">Reset</button>
+            </div>
+            
+            <div class="animation-steps">
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <p>Ambulance detected approaching junction</p>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div>
+                    <p>System calculates optimal signal timing</p>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-number">3</div>
+                    <p>Traffic lights change to create green corridor</p>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-number">4</div>
+                    <p>Ambulance passes through unimpeded</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Components Section -->
+    <section id="components">
+        <h2>System Components</h2>
+        <p>The complete solution integrates hardware and software components for seamless emergency response coordination.</p>
+        
+        <div class="components-grid">
+            <div class="component-card">
+                <h3 class="component-title"><span class="component-icon">A</span>Ambulance Unit</h3>
+                <ul class="component-features">
+                    <li><strong>GPS Module (NEO-6M):</strong> Provides real-time location data with 2.5m accuracy</li>
+                    <li><strong>GSM Module (SIM800L):</strong> Transmits location data to central server</li>
+                    <li><strong>Microcontroller (Arduino/RPi):</strong> Processes data and manages communication</li>
+                    <li><strong>RFID Tag:</strong> Backup identification if GPS fails</li>
+                    <li><strong>Emergency Buzzer:</strong> Alerts nearby vehicles when approaching</li>
+                </ul>
+            </div>
+            <div class="component-card">
+                <h3 class="component-title"><span class="component-icon">T</span>Traffic Signal Unit</h3>
+                <ul class="component-features">
+                    <li><strong>ESP32 Controller:</strong> Manages traffic light logic and communication</li>
+                    <li><strong>LED Traffic Lights:</strong> High-visibility signals for all directions</li>
+                    <li><strong>RFID Reader:</strong> Detects approaching ambulances (backup system)</li>
+                    <li><strong>Wi-Fi/4G Module:</strong> Connects to central control system</li>
+                    <li><strong>Power Supply:</strong> Solar/battery backup for uninterrupted operation</li>
+                </ul>
+            </div>
+            <div class="component-card">
+                <h3 class="component-title"><span class="component-icon">C</span>Central Control System</h3>
+                <ul class="component-features">
+                    <li><strong>Python/Node.js Backend:</strong> Processes data and runs algorithms</li>
+                    <li><strong>Firebase Realtime DB:</strong> Stores and synchronizes all system data</li>
+                    <li><strong>React Dashboard:</strong> Real-time monitoring and control interface</li>
+                    <li><strong>MQTT Broker:</strong> Handles IoT device communication</li>
+                    <li><strong>Analytics Engine:</strong> Optimizes routes and predicts traffic patterns</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section id="technology">
+        <h2>Technology Stack</h2>
+        <p>We leverage cutting-edge technologies for maximum reliability, performance, and scalability.</p>
+        
+        <div class="tech-stack">
+            <div class="tech-item">Python</div>
+            <div class="tech-item">Node.js</div>
+            <div class="tech-item">React</div>
+            <div class="tech-item">Firebase</div>
+            <div class="tech-item">MQTT</div>
+            <div class="tech-item">GSM</div>
+            <div class="tech-item">ESP32</div>
+            <div class="tech-item">Arduino</div>
+            <div class="tech-item">OpenCV</div>
+            <div class="tech-item">TensorFlow</div>
+        </div>
+        
+        <h3 style="margin-top: 3rem;">Communication Protocols</h3>
+        <div class="components-grid" style="margin-top: 1rem;">
+            <div class="component-card">
+                <h4>MQTT</h4>
+                <p>Lightweight IoT protocol for real-time communication between traffic signals and central server with minimal latency.</p>
+            </div>
+            <div class="component-card">
+                <h4>GSM/GPRS</h4>
+                <p>Cellular communication for ambulances to transmit GPS data even in areas without Wi-Fi coverage.</p>
+            </div>
+            <div class="component-card">
+                <h4>HTTP/WebSockets</h4>
+                <p>For dashboard communication and real-time updates to traffic control centers.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits">
+        <h2>Why Our System Wins</h2>
+        <p>Compared to traditional camera-based systems, our solution offers superior performance at lower cost with greater reliability.</p>
+        
+        <table class="comparison-table">
+            <tr>
+                <th>Feature</th>
+                <th>Camera-Based Systems</th>
+                <th>Our AI System</th>
+            </tr>
+            <tr>
+                <td><strong>Cost</strong></td>
+                <td>Expensive cameras and installation ($5,000+ per intersection)</td>
+                <td>Low-cost GPS + IoT components ($500 per intersection)</td>
+            </tr>
+            <tr>
+                <td><strong>Response Time</strong></td>
+                <td>Slow image processing (2-5 sec delay for detection)</td>
+                <td>Real-time signal adjustment (under 500ms latency)</td>
+            </tr>
+            <tr>
+                <td><strong>Reliability</strong></td>
+                <td>Affected by weather, lighting, and obstructions</td>
+                <td>Works in all conditions with GPS + RFID backup</td>
+            </tr>
+            <tr>
+                <td><strong>Accuracy</strong></td>
+                <td>80-90% detection rate in ideal conditions</td>
+                <td>99.9% detection rate with multiple verification methods</td>
+            </tr>
+            <tr>
+                <td><strong>Scalability</strong></td>
+                <td>Complex city-wide deployment requiring extensive infrastructure</td>
+                <td>Plug-and-play junction modules that work standalone or networked</td>
+            </tr>
+            <tr>
+                <td><strong>Maintenance</strong></td>
+                <td>High (regular camera cleaning, alignment checks)</td>
+                <td>Low (self-monitoring with automatic alerts for issues)</td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- Future Section -->
+    <section id="future">
+        <h2>Future Enhancements</h2>
+        <p>We're continuously improving the system with advanced features and capabilities.</p>
+        
+        <div class="future-features">
+            <div class="feature-card">
+                <div class="feature-icon">🔊</div>
+                <h3>Siren Detection AI</h3>
+                <p>Audio analysis to verify approaching emergency vehicles using machine learning for siren pattern recognition.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚗</div>
+                <h3>License Plate Recognition</h3>
+                <p>Computer vision to identify VIP ambulances and other authorized emergency vehicles for special priority.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⛓️</div>
+                <h3>Blockchain Security</h3>
+                <p>Tamper-proof logs for signal override events and system changes to ensure accountability.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚁</div>
+                <h3>Drone Scouts</h3>
+                <p>Aerial traffic monitoring ahead of ambulance route to predict and clear potential bottlenecks.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Driver Alert System</h3>
+                <p>Mobile app integration to warn drivers of approaching emergency vehicles via their navigation apps.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>Autonomous Coordination</h3>
+                <p>Integration with self-driving car networks to automatically create emergency corridors.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2>Get in Touch</h2>
+        <p>Interested in implementing this life-saving technology in your city? Contact our team for more information.</p>
+        
+        <div class="contact-form">
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="organization">Organization</label>
+                    <input type="text" id="organization">
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <h3>Smart Traffic Control System for Ambulances</h3>
+        <p>Revolutionizing emergency response through intelligent transportation technology</p>
+        
+        <ul class="footer-links">
+            <li><a href="#problem">Problem</a></li>
+            <li><a href="#workflow">Solution</a></li>
+            <li><a href="#components">Technology</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        
+        <p class="copyright">© 2023 SmartTCS. All rights reserved. | Made with ❤️ for Emergency Services</p>
+    </footer>
+
+    <script src="app.js"></script>
+    </body>
+
+    
